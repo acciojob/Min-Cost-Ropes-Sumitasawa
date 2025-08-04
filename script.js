@@ -16,3 +16,16 @@ function mincost(arr) {
 
   return totalCost;
 }
+
+function handleMinCost() {
+  const input = document.getElementById("inputArr").value;
+  const arr = input.split(",").map(Number).filter(n => !isNaN(n) && n > 0);
+
+  if (arr.length === 0) {
+    document.getElementById("result").textContent = "Please enter valid rope lengths.";
+    return;
+  }
+
+  const result = mincost(arr);
+  document.getElementById("result").textContent = `Minimum cost: ${result}`;
+}
