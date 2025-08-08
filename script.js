@@ -1,86 +1,78 @@
 class MinHeap {
-  constructor() {
-    this.heap = [];
-  }
-
-  insert(val) {
-    this.heap.push(val);
-    this.bubbleUp();
-  }
-
-  extractMin() {
-    if (this.heap.length === 1) return this.heap.pop();
-    const min = this.heap[0];
-    this.heap[0] = this.heap.pop();
-    this.bubbleDown();
-    return min;
-  }
-
-  size() {
-    return this.heap.length;
-  }
-
-  bubbleUp() {
-    let index = this.heap.length - 1;
-    const element = this.heap[index];
-
-    while (index > 0) {
-      let parentIndex = Math.floor((index - 1) / 2);
-      let parent = this.heap[parentIndex];
-
-      if (element >= parent) break;
-
-      this.heap[index] = parent;
-      this.heap[parentIndex] = element;
-      index = parentIndex;
+    constructor() {
+        this.heap = [];
     }
-  }
 
-  bubbleDown() {
-    let index = 0;
-    const length = this.heap.length;
-    const element = this.heap[0];
+    insert(val) {
+        this.heap.push(val);
+        this._heapifyUp();
+    }
 
-    while (true) {
-      let leftIdx = 2 * index + 1;
-      let rightIdx = 2 * index + 2;
-      let left, right;
-      let swap = null;
+    extractMin() {
+        if (this.heap.length === 0) return null;
+        if (this.heap.length === 1) return this.heap.pop();
+        const min = this.heap[0];
+        this.heap[0] = this.heap.pop();
+        this._heapifyDown();
+        return min;
+    }
 
-      if (leftIdx < length) {
-        left = this.heap[leftIdx];
-        if (left < element) swap = leftIdx;
-      }
+    size() {
+        return this.heap.length;
+    }
 
-      if (rightIdx < length) {
-        right = this.heap[rightIdx];
-        if ((swap === null && right < element) || (swap !== null && right < left)) {
-          swap = rightIdx;
+    _heapifyUp() {
+        let index = this.heap.length - 1;
+        while (
+            index > 0 &&
+            this.heap[index] < this.heap[Math.floor((index - 1) / 2)]
+        ) {
+            [this.heap[index], this.heap[Math.floor((index - 1) / 2)]] =
+                [this.heap[Math.floor((index - 1) / 2)], this.heap[index]];
+            index = Math.floor((index - 1) / 2);
         }
-      }
-
-      if (swap === null) break;
-
-      this.heap[index] = this.heap[swap];
-      this.heap[swap] = element;
-      index = swap;
     }
-  }
+
+    _heapifyDown() {
+        let index = 0;
+        const length = this.heap.length;
+        while (true) {
+            let smallest = index;
+            let left = 2 * index + 1;
+            let right = 2 * index + 2;
+
+            if (left < length && this.heap[left] < this.heap[smallest]) {
+                smallest = left;
+            }
+            if (right < length && this.heap[right] < this.heap[smallest]) {
+                smallest = right;
+            }
+
+            if (smallest !== index) {
+                [this.heap[smallest], this.heap[index]] =
+                    [this.heap[index], this.heap[smallest]];
+                index = smallest;
+            } else {
+                break;
+            }
+        }
+    }
 }
 
-function mincost(arr) {
-  const minHeap = new MinHeap();
-  for (let val of arr) minHeap.insert(val);
+function minCost(arr) {
+    const heap = new MinHeap();
+    for (let num of arr) {
+        heap.insert(num);
+    }
 
-  let totalCost = 0;
+    let cost = 0;
+    while (heap.size() > 1) {
+        const min1 = heap.extractMin();
+        const min2 = heap.extractMin();
+        const sum = min1 + min2;
+        cost += sum;
+        heap.insert(sum);
+    }
 
-  while (minHeap.size() > 1) {
-    let first = minHeap.extractMin();
-    let second = minHeap.extractMin();
-    let cost = first + second;
-    totalCost += cost;
-    minHeap.insert(cost);
-  }
-
-  return totalCost;
+    return cost;
 }
