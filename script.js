@@ -1,3 +1,4 @@
+// minCost.js
 class MinHeap {
     constructor() {
         this.heap = [];
@@ -76,3 +77,5 @@ function minCost(arr) {
 
     return cost;
 }
+
+module.exports = minCost;
